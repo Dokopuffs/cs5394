@@ -9,14 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class SimpleTest implements ApplicationListener {
 
-   public static void main(String[] args) {
-      LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-      cfg.width = 800;
-      cfg.height = 600;
-      cfg.useGL20 = true; // 90% or more of your desktop users should support GL20
-
-      new LwjglApplication(new SimpleTest(), cfg);
-   }
+//   public static void main(String[] args) {
+//      LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+//      cfg.width = 800;
+//      cfg.height = 600;
+//      cfg.useGL20 = true; // 90% or more of your desktop users should support GL20
+//
+//      new LwjglApplication(new SimpleTest(), cfg);
+//   }
 
    Stage stage;
    Image image;
