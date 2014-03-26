@@ -23,8 +23,6 @@ public class SuperStarPlatformer implements ApplicationListener {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -42,7 +40,7 @@ public class SuperStarPlatformer implements ApplicationListener {
 	@Override
 	public void resize(int arg0, int arg1) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

@@ -1,0 +1,1 @@
+In order to run the black-box program, the SDK tools must be installed on the system. Commands to run: monkeyrunner exampletestname.py. Ex.) monkeyrunner test1.py.
