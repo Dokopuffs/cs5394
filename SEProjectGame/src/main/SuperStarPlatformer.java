@@ -1,24 +1,24 @@
 package main;
 
+import screen.PauseScreen;
+import screen.TitleScreen;
+
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-public class SuperStarPlatformer implements ApplicationListener {
-
-	public static void main(String[] args){
-		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-		cfg.width = 800;
-		cfg.height = 600;
-		cfg.useGL20 = true;
-		
-		new LwjglApplication(new SuperStarPlatformer(), cfg);
-	}
+public class SuperStarPlatformer extends Game {
+	
+	TitleScreen title;
+	PauseScreen pause;
 	
 	@Override
 	public void create() {
 		// TODO Auto-generated method stub
-
+		title = new TitleScreen(this);
+		pause = new PauseScreen(this);
+		this.setScreen(title);
 	}
 
 	@Override
@@ -33,8 +33,7 @@ public class SuperStarPlatformer implements ApplicationListener {
 
 	@Override
 	public void render() {
-		// TODO Auto-generated method stub
-
+		super.render();
 	}
 
 	@Override
