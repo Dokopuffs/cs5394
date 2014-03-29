@@ -65,12 +65,16 @@ public class TitleScreen implements Screen {
         		font.draw(batch, msg, (width / 2) - (msg.length() * 4), height / 3);
         	}
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.X)){
-        	ssp.setScreen(ssp.getGame());
-        }
  
         // the end method does the drawings
         batch.end();
+        
+        if (Gdx.input.isKeyPressed(Input.Keys.X)){
+        	ssp.setScreen(ssp.getGame());
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+        	Gdx.app.exit();
+        }
         
 	}
 
