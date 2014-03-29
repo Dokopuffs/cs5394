@@ -1,8 +1,17 @@
 package screen;
 
+import main.SuperStarPlatformer;
+
 import com.badlogic.gdx.Screen;
 
 public class GameScreen implements Screen {
+
+	private SuperStarPlatformer ssp;
+	
+	public GameScreen(SuperStarPlatformer superStarPlatformer) {
+		// TODO Auto-generated constructor stub
+		this.ssp = superStarPlatformer;
+	}
 
 	@Override
 	public void dispose() {

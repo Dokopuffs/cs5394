@@ -1,5 +1,6 @@
 package main;
 
+import screen.GameScreen;
 import screen.PauseScreen;
 import screen.TitleScreen;
 
@@ -10,14 +11,28 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class SuperStarPlatformer extends Game {
 	
-	TitleScreen title;
-	PauseScreen pause;
+	private TitleScreen title;
+	public TitleScreen getTitle() {
+		return title;
+	}
+
+	public PauseScreen getPause() {
+		return pause;
+	}
+
+	public GameScreen getGame() {
+		return game;
+	}
+
+	private PauseScreen pause;
+	private GameScreen game;
 	
 	@Override
 	public void create() {
 		// TODO Auto-generated method stub
 		title = new TitleScreen(this);
 		pause = new PauseScreen(this);
+		game = new GameScreen(this);
 		this.setScreen(title);
 	}
 
