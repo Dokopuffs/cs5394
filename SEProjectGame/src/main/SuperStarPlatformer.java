@@ -4,10 +4,7 @@ import screen.GameScreen;
 import screen.PauseScreen;
 import screen.TitleScreen;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class SuperStarPlatformer extends Game {
 	

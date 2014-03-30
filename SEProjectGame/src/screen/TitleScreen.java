@@ -1,7 +1,5 @@
 package screen;
 
-import java.awt.Color;
-
 import main.SuperStarPlatformer;
 
 import com.badlogic.gdx.Gdx;

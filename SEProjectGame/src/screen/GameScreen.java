@@ -2,11 +2,23 @@ package screen;
 
 import main.SuperStarPlatformer;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class GameScreen implements Screen {
 
 	private SuperStarPlatformer ssp;
+	private TiledMap level;
+	private OrthographicCamera camera;
+	private Animation playerWalk;
+	private Animation playerJump;
+	private Animation playerStand;
+	private OrthogonalTiledMapRenderer renderer;
 	
 	public GameScreen(SuperStarPlatformer superStarPlatformer) {
 		// TODO Auto-generated constructor stub
@@ -32,9 +44,9 @@ public class GameScreen implements Screen {
 	}
 
 	@Override
-	public void render(float arg0) {
-		// TODO Auto-generated method stub
-
+	public void render(float delta) {
+		//handle change in views and what not
+		
 	}
 
 	@Override
@@ -51,8 +63,8 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-
+		// instantiate everything here
+		
 	}
 
 }
