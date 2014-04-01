@@ -1,5 +1,5 @@
 package characters;
 
-public enum State {
+public enum EnemyState {
 	Patrol, Retreat, Charge, Attack, Kite
 }

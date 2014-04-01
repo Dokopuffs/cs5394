@@ -1,6 +1,6 @@
 package characters;
 
-public class EnemyType1 extends Enemy {
+public class KitingEnemy extends Enemy {
 
 	@Override
 	void New() {

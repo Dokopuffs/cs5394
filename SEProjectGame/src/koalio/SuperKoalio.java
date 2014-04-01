@@ -1,3 +1,5 @@
+package koalio;
+
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
  *
@@ -14,10 +16,10 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.tests.superkoalio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -31,9 +33,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.ApplicationListener;
 
 /**
  * Super Mario Brothers like very basic platformer, using a tile map build via
@@ -45,7 +47,7 @@ import com.badlogic.gdx.utils.Pool;
  * 
  * @author mzechner
  */
-public class SuperKoalio extends GdxTest {
+public class SuperKoalio implements ApplicationListener {
 	/** The player character, has state and state time, */
 	static class Koala {
 		static float WIDTH;
@@ -64,6 +66,10 @@ public class SuperKoalio extends GdxTest {
 		float stateTime = 0;
 		boolean facesRight = true;
 		boolean grounded = false;
+	}
+	
+	public static void main(String[] args){
+		new LwjglApplication(new SuperKoalio());
 	}
 
 	private TiledMap map;
@@ -87,12 +93,12 @@ public class SuperKoalio extends GdxTest {
 	@Override
 	public void create() {
 		// load the koala frames, split them, and assign them to Animations
-		koalaTexture = new Texture("data/maps/tiled/super-koalio/koalio.png");
+		koalaTexture = new Texture("reference/koalio_data/koalio.png");
 		TextureRegion[] regions = TextureRegion.split(koalaTexture, 18, 26)[0];
 		stand = new Animation(0, regions[0]);
 		jump = new Animation(0, regions[1]);
 		walk = new Animation(0.15f, regions[2], regions[3], regions[4]);
-		walk.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+		walk.setPlayMode(Animation.LOOP_PINGPONG);
 
 		// figure out the width and height of the koala for collision
 		// detection and rendering by converting a koala frames pixel
@@ -102,7 +108,7 @@ public class SuperKoalio extends GdxTest {
 
 		// load the map, set the unit scale to 1/16 (1 unit == 16 pixels)
 		map = new TmxMapLoader()
-				.load("data/maps/tiled/super-koalio/level1.tmx");
+				.load("reference/koalio_data/level1.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / 16f);
 
 		// create an orthographic camera, shows us 30x20 units of the world
@@ -322,5 +328,23 @@ public class SuperKoalio extends GdxTest {
 
 	@Override
 	public void dispose() {
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resize(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
 	}
 }

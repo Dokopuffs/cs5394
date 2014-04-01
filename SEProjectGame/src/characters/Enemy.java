@@ -2,7 +2,7 @@ package characters;
 
 public abstract class Enemy extends Entity {
 
-	State state;
+	EnemyState state;
 	
 	@Override
 	abstract void New();
