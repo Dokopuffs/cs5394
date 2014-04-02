@@ -8,8 +8,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -108,18 +110,24 @@ public class GameScreen implements Screen {
 	@Override
 	public void show() {
 		// instantiate everything here
-		playerTexture = new Texture("reference/koalio_data/koalio.png");
-		TextureRegion[] regions = TextureRegion.split(playerTexture, 18, 26)[0];
-		stand = new Animation(0, regions[0]);
-		jump = new Animation(0, regions[1]);
-		walk = new Animation(0.15f, regions[2], regions[3], regions[4]);
+		int maxWidth = 24, maxHeight = 30;
+		playerTexture = new Texture("content/Megaman.png");
+		TextureRegion standReg = new TextureRegion(playerTexture, 94, 4, maxWidth, maxHeight);
+		TextureRegion jumpReg = new TextureRegion(playerTexture, 199, 4, maxWidth, maxHeight);
+		stand = new Animation(0, standReg);
+		jump = new Animation(0, jumpReg);
+		TextureRegion[] walkRegs = new TextureRegion[3];
+		walkRegs[0] = new TextureRegion(playerTexture, 122, 4, maxWidth, maxHeight);
+		walkRegs[1] = new TextureRegion(playerTexture, 147, 4, maxWidth, maxHeight);
+		walkRegs[2] = new TextureRegion(playerTexture, 173, 4, maxWidth, maxHeight );
+		walk = new Animation(0.15f, walkRegs[0], walkRegs[1], walkRegs[2]);
 		walk.setPlayMode(Animation.LOOP_PINGPONG);
 
 		// figure out the width and height of the koala for collision
 		// detection and rendering by converting a koala frames pixel
 		// size into world units (1 unit == 16 pixels)
-		Koala.WIDTH = 1 / 16f * regions[0].getRegionWidth();
-		Koala.HEIGHT = 1 / 16f * regions[0].getRegionHeight();
+		Koala.WIDTH = 1 / 16f * standReg.getRegionWidth();
+		Koala.HEIGHT = 1 / 16f * standReg.getRegionHeight();
 
 		// load the map, set the unit scale to 1/16 (1 unit == 16 pixels)
 		level = new TmxMapLoader().load("reference/koalio_data/level1.tmx");
