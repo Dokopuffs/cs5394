@@ -1,8 +1,13 @@
 package screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import koalio.SuperKoalio.Koala;
 import koalio.SuperKoalio.Koala.State;
 import main.SuperStarPlatformer;
+import characters.Bullet;
+import characters.Entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -21,6 +26,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Frustum;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -31,14 +38,19 @@ public class GameScreen implements Screen {
 	private Array<Rectangle> tiles = new Array<Rectangle>();
 	private static final float GRAVITY = -2.5f;
 	private Texture playerTexture;
+	private Texture bulletTexture;
 	private SuperStarPlatformer ssp;
 	private TiledMap level;
 	private OrthographicCamera camera;
 	private Animation walk;
 	private Animation jump;
 	private Animation stand;
+	private List<Entity> entityList;
 	private OrthogonalTiledMapRenderer renderer;
+	private TextureRegion bulletReg;
 	private Koala koala;
+	private float totalTime = 0.0f;
+	private float lastBulletFired = 0.0f;
 	private Pool<Rectangle> rectPool = new Pool<Rectangle>() {
 		@Override
 		protected Rectangle newObject() {
@@ -81,18 +93,29 @@ public class GameScreen implements Screen {
 		// update the koala (process input, collision detection, position
 		// update)
 		updateKoala(delta);
-
+		List<Entity> entitiesToRemove = new ArrayList<Entity>();
+		for(Entity e : entityList){
+			e.Update(delta);
+			boolean isInCamera = camera.frustum.pointInFrustum(e.position.x, e.position.y, 0f);
+			if (e instanceof Bullet && !isInCamera){
+				entitiesToRemove.add(e);
+			}
+		}
+		entityList.remove(entitiesToRemove);
 		// let the camera follow the koala, x-axis only
 		camera.position.x = koala.position.x;
 		camera.update();
 
-		// set the tile map rendere view based on what the
+		// set the tile map renderer view based on what the
 		// camera sees and render the map
 		renderer.setView(camera);
 		renderer.render();
 
 		// render the koala
 		renderKoala(delta);
+		for(Entity e: entityList){
+			e.Render(delta);
+		}
 	}
 
 	@Override
@@ -112,6 +135,8 @@ public class GameScreen implements Screen {
 		// instantiate everything here
 		int maxWidth = 24, maxHeight = 30;
 		playerTexture = new Texture("content/Megaman.png");
+		bulletTexture = new Texture("content/bullet.png");
+		bulletReg = new TextureRegion(bulletTexture, 2, 4, 12, 8);
 		TextureRegion standReg = new TextureRegion(playerTexture, 94, 4, maxWidth, maxHeight);
 		TextureRegion jumpReg = new TextureRegion(playerTexture, 199, 4, maxWidth, maxHeight);
 		stand = new Animation(0, standReg);
@@ -119,9 +144,11 @@ public class GameScreen implements Screen {
 		TextureRegion[] walkRegs = new TextureRegion[3];
 		walkRegs[0] = new TextureRegion(playerTexture, 122, 4, maxWidth, maxHeight);
 		walkRegs[1] = new TextureRegion(playerTexture, 147, 4, maxWidth, maxHeight);
-		walkRegs[2] = new TextureRegion(playerTexture, 173, 4, maxWidth, maxHeight );
+		walkRegs[2] = new TextureRegion(playerTexture, 173, 4, maxWidth, maxHeight);
 		walk = new Animation(0.15f, walkRegs[0], walkRegs[1], walkRegs[2]);
 		walk.setPlayMode(Animation.LOOP_PINGPONG);
+		
+		entityList = new ArrayList<Entity>();
 
 		// figure out the width and height of the koala for collision
 		// detection and rendering by converting a koala frames pixel
@@ -130,8 +157,8 @@ public class GameScreen implements Screen {
 		Koala.HEIGHT = 1 / 16f * standReg.getRegionHeight();
 
 		// load the map, set the unit scale to 1/16 (1 unit == 16 pixels)
-		level = new TmxMapLoader().load("reference/koalio_data/level1.tmx");
-		renderer = new OrthogonalTiledMapRenderer(level, 1 / 16f);
+		level = new TmxMapLoader().load("reference/koalio_data/level2.tmx");
+		renderer = new OrthogonalTiledMapRenderer(level, 1 / 17f);
 
 		// create an orthographic camera, shows us 30x20 units of the world
 		camera = new OrthographicCamera();
@@ -166,6 +193,7 @@ public class GameScreen implements Screen {
 		if (deltaTime == 0)
 			return;
 		koala.stateTime += deltaTime;
+		totalTime += deltaTime;
 
 		// check input and apply to velocity & state
 		if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.75f, 1))
@@ -189,6 +217,17 @@ public class GameScreen implements Screen {
 			if (koala.grounded)
 				koala.state = Koala.State.Walking;
 			koala.facesRight = true;
+		}
+		
+		if(Gdx.input.isKeyPressed(Keys.F)){
+			//fire off a bullet
+			if ((totalTime - lastBulletFired) > 0.08f)
+				fireBullet(koala.position, koala.facesRight);
+				lastBulletFired = totalTime;
+		}
+		
+		if (Gdx.input.isKeyPressed(Keys.ESCAPE)){
+			Gdx.app.exit();
 		}
 
 		// apply gravity if we are falling
@@ -279,6 +318,17 @@ public class GameScreen implements Screen {
 
 	}
 	
+	private void fireBullet(Vector2 position, boolean facesRight) {
+		Vector2 newPos = new Vector2(position.x, position.y + .5f);
+		if(facesRight){
+			newPos.x += .5f;
+			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer));
+		} else {
+			newPos.x -= .5f;
+			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer));
+		}
+	}
+
 	private boolean isTouched(float startX, float endX) {
 		// check if any finge is touch the area between startX and endX
 		// startX/endX are given between 0 (left edge of the screen) and 1

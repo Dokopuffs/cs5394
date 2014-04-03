@@ -1,13 +1,14 @@
 package characters;
 
+import com.badlogic.gdx.math.Vector2;
+
 public abstract class Enemy extends Entity {
 
-	EnemyState state;
-	
-	@Override
-	abstract void New();
+	Enemy(Vector2 pos, int health) {
+		super(pos, health);
+		// TODO Auto-generated constructor stub
+	}
 
-	@Override
-	abstract void Update();
+	EnemyState state;
 
 }

@@ -4,6 +4,11 @@ import com.badlogic.gdx.math.Vector2;
 public abstract class PlayerCharacter extends Entity {
 
 
+	PlayerCharacter(Vector2 pos, int health) {
+		super(pos, health);
+		// TODO Auto-generated constructor stub
+	}
+
 	/** The player character, has state and state time, */
 	public static class Player {
 		static float WIDTH;
