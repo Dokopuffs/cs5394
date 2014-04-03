@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="20" tilewidth="17" tileheight="17">
+ <tileset firstgid="1" name="Megaman" tilewidth="16" tileheight="16">
+  <image source="ctilesmegaman.png" width="512" height="256"/>
+ </tileset>
+ <layer name="Background" width="100" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAYH0AAAQ==
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="100" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzt08kJgDAQQNEU4NKISyNR++/GAT2EwGQZEhD5D/4hIB4mGecAAAAAAAAAAMCfDIlKv9MapUmalfCI57YrhRZDq7QV/v9PLG9Xm1GL+/Bvh3RKl1K8Q7lzL5b5tZhvbSHLfuR2pvbcS4/Zfek+fKJwZ2rPvdyxoSkM
+  </data>
+ </layer>
+</map>
