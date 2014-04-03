@@ -101,7 +101,8 @@ public class GameScreen implements Screen {
 				entitiesToRemove.add(e);
 			}
 		}
-		entityList.remove(entitiesToRemove);
+		entityList.removeAll(entitiesToRemove);
+		entitiesToRemove.clear();
 		// let the camera follow the koala, x-axis only
 		camera.position.x = koala.position.x;
 		camera.update();
