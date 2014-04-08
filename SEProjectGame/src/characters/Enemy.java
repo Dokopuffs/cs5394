@@ -1,5 +1,6 @@
 package characters;
 
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 public  class Enemy extends Entity {
 	
 	private int hp;
+	private Vector2 playerPosition;
 	private final float MAX_VEL = 2f;
 	private TextureRegion tex;
 	private OrthogonalTiledMapRenderer renderer;
@@ -20,6 +22,7 @@ public  class Enemy extends Entity {
 		super(pos, health);
 		hp = health;
 		tex = enemyReg;
+	
 		this.position.x = pos.x;
 		this.position.y = pos.y;
 		this.renderer = renderer;
@@ -28,9 +31,11 @@ public  class Enemy extends Entity {
 	
 	@Override
 	public void Update(float delta) {
-		
+	
 		position.x += delta * velocity;
+		
 	}
+	
 	
 	@Override
 	public void Render(float delta) {
