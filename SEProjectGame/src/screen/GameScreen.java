@@ -8,6 +8,7 @@ import koalio.SuperKoalio.Koala.State;
 import main.SuperStarPlatformer;
 import characters.Bullet;
 import characters.Entity;
+import characters.Enemy;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -39,6 +40,7 @@ public class GameScreen implements Screen {
 	private static final float GRAVITY = -2.5f;
 	private Texture playerTexture;
 	private Texture bulletTexture;
+	private Texture enemyTexture;
 	private SuperStarPlatformer ssp;
 	private TiledMap level;
 	private OrthographicCamera camera;
@@ -48,7 +50,9 @@ public class GameScreen implements Screen {
 	private List<Entity> entityList;
 	private OrthogonalTiledMapRenderer renderer;
 	private TextureRegion bulletReg;
+	private TextureRegion enemyReg;
 	private Koala koala;
+	private Enemy enemy;
 	private float totalTime = 0.0f;
 	private float lastBulletFired = 0.0f;
 	private Pool<Rectangle> rectPool = new Pool<Rectangle>() {
@@ -137,7 +141,9 @@ public class GameScreen implements Screen {
 		int maxWidth = 24, maxHeight = 30;
 		playerTexture = new Texture("content/Megaman.png");
 		bulletTexture = new Texture("content/bullet.png");
+		enemyTexture = new Texture("content/koalio2.png");
 		bulletReg = new TextureRegion(bulletTexture, 2, 4, 12, 8);
+		enemyReg = new TextureRegion(enemyTexture, 18, 26);
 		TextureRegion standReg = new TextureRegion(playerTexture, 94, 4, maxWidth, maxHeight);
 		TextureRegion jumpReg = new TextureRegion(playerTexture, 199, 4, maxWidth, maxHeight);
 		stand = new Animation(0, standReg);
@@ -165,10 +171,25 @@ public class GameScreen implements Screen {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 30, 20);
 		camera.update();
+		
+		
+		
 
 		// create the Koala we want to move around the world
 		koala = new Koala();
 		koala.position.set(20, 20);
+		
+		//create enemies
+		Vector2 enemyPos = new Vector2(20f, 5f);
+		entityList.add(new Enemy(enemyPos, 2, enemyReg, renderer));
+		
+		Vector2 enemyPos2 = new Vector2(25f, 8f);
+		entityList.add(new Enemy(enemyPos2, 2, enemyReg, renderer));
+		
+		
+		Vector2 enemyPos3 = new Vector2(40f, 7f);
+		entityList.add(new Enemy(enemyPos3, 2, enemyReg, renderer));
+		
 	}
 
 	static class Koala {
@@ -286,6 +307,8 @@ public class GameScreen implements Screen {
 		endX = (int) (koala.position.x + Koala.WIDTH);
 		getTiles(startX, startY, endX, endY, tiles);
 		koalaRect.y += koala.velocity.y;
+		
+		
 		for (Rectangle tile : tiles) {
 			if (koalaRect.overlaps(tile)) {
 				// we actually reset the koala y-position here
@@ -323,7 +346,7 @@ public class GameScreen implements Screen {
 		Vector2 newPos = new Vector2(position.x, position.y + .5f);
 		if(facesRight){
 			newPos.x += .5f;
-			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer));
+			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer));	
 		} else {
 			newPos.x -= .5f;
 			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer));
