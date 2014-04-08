@@ -180,15 +180,15 @@ public class GameScreen implements Screen {
 		koala.position.set(20, 20);
 		
 		//create enemies
-		Vector2 enemyPos = new Vector2(10f, 5f);
+		Vector2 enemyPos = new Vector2(30f, 5f);
 		//Vector2 playerPos = new Vector2(koala.position.x, koala.position.y);
 		entityList.add(new Enemy(enemyPos, 2, enemyReg, renderer));
 		
-		Vector2 enemyPos2 = new Vector2(25f, 8f);
+		Vector2 enemyPos2 = new Vector2(20f, 9f);
 		entityList.add(new Enemy(enemyPos2, 2, enemyReg, renderer));
 		
 		
-		Vector2 enemyPos3 = new Vector2(40f, 7f);
+		Vector2 enemyPos3 = new Vector2(15f, 7f);
 		entityList.add(new Enemy(enemyPos3,  2, enemyReg, renderer));
 		
 	}
