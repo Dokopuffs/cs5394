@@ -1,5 +1,5 @@
 package characters;
 
 public enum PlayerState {
-		 Stand, Walk, Jump	
+		 Standing, Walking, Jumping	
 }

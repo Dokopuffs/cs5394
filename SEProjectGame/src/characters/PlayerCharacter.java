@@ -1,12 +1,20 @@
 package characters;
+
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class PlayerCharacter extends Entity {
+public class PlayerCharacter extends Entity {
 
 
-	PlayerCharacter(Vector2 pos, int health) {
+	public PlayerState state;
+	public float stateTime;
+
+	public PlayerCharacter(Vector2 pos, int health) {
 		super(pos, health);
-		// TODO Auto-generated constructor stub
+		state = PlayerState.Standing;
+	}
+	
+	public enum State {
+		Standing, Walking, Jumping
 	}
 
 	/** The player character, has state and state time, */
@@ -17,15 +25,23 @@ public abstract class PlayerCharacter extends Entity {
 		static float JUMP_VELOCITY = 40f;
 		static float DAMPING = 0.87f;
 
-		public enum State {
-			Standing, Walking, Jumping
-		}
-
 		final Vector2 position = new Vector2();
 		final Vector2 velocity = new Vector2();
 		State state = State.Walking;
 		float stateTime = 0;
 		boolean facesRight = true;
 		boolean grounded = false;
+	}
+
+	@Override
+	public void Update(float delta) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void Render(float delta) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import koalio.SuperKoalio.Koala;
-import koalio.SuperKoalio.Koala.State;
 import main.SuperStarPlatformer;
 import characters.Bullet;
 import characters.Entity;
 import characters.Enemy;
+import characters.PlayerCharacter;
+import characters.PlayerCharacter.Player;
+import characters.PlayerState;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -36,6 +38,12 @@ import com.badlogic.gdx.utils.Pool;
 
 public class GameScreen implements Screen {
 
+	static float WIDTH;
+	static float HEIGHT;
+	static float MAX_VELOCITY = 10f;
+	static float JUMP_VELOCITY = 40f;
+	static float DAMPING = 0.87f;
+	
 	private Array<Rectangle> tiles = new Array<Rectangle>();
 	private static final float GRAVITY = -2.5f;
 	private Texture playerTexture;
@@ -51,7 +59,7 @@ public class GameScreen implements Screen {
 	private OrthogonalTiledMapRenderer renderer;
 	private TextureRegion bulletReg;
 	private TextureRegion enemyReg;
-	private Koala koala;
+	private PlayerCharacter player;
 	private Enemy enemy;
 	private float totalTime = 0.0f;
 	private float lastBulletFired = 0.0f;
@@ -101,14 +109,32 @@ public class GameScreen implements Screen {
 		for(Entity e : entityList){
 			e.Update(delta);
 			boolean isInCamera = camera.frustum.pointInFrustum(e.position.x, e.position.y, 0f);
-			if (e instanceof Bullet && !isInCamera){
-				entitiesToRemove.add(e);
+			if (e instanceof Bullet){
+				if (!isInCamera){
+					entitiesToRemove.add(e);
+				} else {
+					//check for collision detection with player or enemy
+					Array<Rectangle> tiles = new Array<Rectangle>();
+					int startX, startY, endX, endY;
+					startX = (int)e.position.x;
+					startY = (int)e.position.y;
+					endX = startX + (int)e.width;
+					endY = startY + (int)e.height;
+					getTiles(startX, startY, endX, endY, tiles);
+					for(Entity e2 : entityList){
+						if (!e.equals(e2)){
+							rectPool.obtain();
+						}
+					}
+					
+					
+				}
 			}
 		}
 		entityList.removeAll(entitiesToRemove);
 		entitiesToRemove.clear();
 		// let the camera follow the koala, x-axis only
-		camera.position.x = koala.position.x;
+		camera.position.x = player.position.x;
 		camera.update();
 
 		// set the tile map renderer view based on what the
@@ -160,8 +186,8 @@ public class GameScreen implements Screen {
 		// figure out the width and height of the koala for collision
 		// detection and rendering by converting a koala frames pixel
 		// size into world units (1 unit == 16 pixels)
-		Koala.WIDTH = 1 / 16f * standReg.getRegionWidth();
-		Koala.HEIGHT = 1 / 16f * standReg.getRegionHeight();
+		WIDTH = 1 / 16f * standReg.getRegionWidth();
+		HEIGHT = 1 / 16f * standReg.getRegionHeight();
 
 		// load the map, set the unit scale to 1/16 (1 unit == 16 pixels)
 		level = new TmxMapLoader().load("reference/koalio_data/level2.tmx");
@@ -176,12 +202,13 @@ public class GameScreen implements Screen {
 		
 
 		// create the Koala we want to move around the world
-		koala = new Koala();
-		koala.position.set(20, 20);
+		Vector2 charPosition = new Vector2(20,20);
+		player = new PlayerCharacter(charPosition, 100);
+		player.position.set(20, 20);
 		
 		//create enemies
 		Vector2 enemyPos = new Vector2(30f, 5f);
-		//Vector2 playerPos = new Vector2(koala.position.x, koala.position.y);
+		//Vector2 playerPos = new Vector2( position.x,  position.y);
 		entityList.add(new Enemy(enemyPos, 2, enemyReg, renderer));
 		
 		Vector2 enemyPos2 = new Vector2(20f, 9f);
@@ -194,11 +221,7 @@ public class GameScreen implements Screen {
 	}
 
 	static class Koala {
-		static float WIDTH;
-		static float HEIGHT;
-		static float MAX_VELOCITY = 10f;
-		static float JUMP_VELOCITY = 40f;
-		static float DAMPING = 0.87f;
+		
 
 		enum State {
 			Standing, Walking, Jumping
@@ -215,37 +238,37 @@ public class GameScreen implements Screen {
 	private void updateKoala(float deltaTime) {
 		if (deltaTime == 0)
 			return;
-		koala.stateTime += deltaTime;
+		player.stateTime += deltaTime;
 		totalTime += deltaTime;
 
 		// check input and apply to velocity & state
 		if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.75f, 1))
-				&& koala.grounded) {
-			koala.velocity.y += Koala.JUMP_VELOCITY;
-			koala.state = Koala.State.Jumping;
-			koala.grounded = false;
+				&& player.grounded) {
+			player.velocity.y +=  JUMP_VELOCITY;
+			player.state = PlayerState.Jumping;
+			player.grounded = false;
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)
 				|| isTouched(0, 0.25f)) {
-			koala.velocity.x = -Koala.MAX_VELOCITY;
-			if (koala.grounded)
-				koala.state = Koala.State.Walking;
-			koala.facesRight = false;
+			player.velocity.x = - MAX_VELOCITY;
+			if (player.grounded)
+				player.state = PlayerState.Walking;
+			player.facesRight = false;
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)
 				|| Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
-			koala.velocity.x = Koala.MAX_VELOCITY;
-			if (koala.grounded)
-				koala.state = Koala.State.Walking;
-			koala.facesRight = true;
+			player.velocity.x =  MAX_VELOCITY;
+			if (player.grounded)
+				player.state = PlayerState.Walking;
+			player.facesRight = true;
 		}
 		
 		if(Gdx.input.isKeyPressed(Keys.F)){
 			//fire off a bullet
 			if ((totalTime - lastBulletFired) > 0.08f)
-				fireBullet(koala.position, koala.facesRight);
+				fireBullet(player.position, player.facesRight);
 				lastBulletFired = totalTime;
 		}
 		
@@ -254,60 +277,60 @@ public class GameScreen implements Screen {
 		}
 
 		// apply gravity if we are falling
-		koala.velocity.add(0, GRAVITY);
+		player.velocity.add(0, GRAVITY);
 
 		// clamp the velocity to the maximum, x-axis only
-		if (Math.abs(koala.velocity.x) > Koala.MAX_VELOCITY) {
-			koala.velocity.x = Math.signum(koala.velocity.x)
-					* Koala.MAX_VELOCITY;
+		if (Math.abs(player.velocity.x) >  MAX_VELOCITY) {
+			player.velocity.x = Math.signum(player.velocity.x)
+					*  MAX_VELOCITY;
 		}
 
 		// clamp the velocity to 0 if it's < 1, and set the state to standign
-		if (Math.abs(koala.velocity.x) < 1) {
-			koala.velocity.x = 0;
-			if (koala.grounded)
-				koala.state = Koala.State.Standing;
+		if (Math.abs(player.velocity.x) < 1) {
+			player.velocity.x = 0;
+			if (player.grounded)
+				player.state =  PlayerState.Standing;
 		}
 
 		// multiply by delta time so we know how far we go
 		// in this frame
-		koala.velocity.scl(deltaTime);
+		player.velocity.scl(deltaTime);
 
 		// perform collision detection & response, on each axis, separately
 		// if the koala is moving right, check the tiles to the right of it's
 		// right bounding box edge, otherwise check the ones to the left
 		Rectangle koalaRect = rectPool.obtain();
-		koalaRect.set(koala.position.x, koala.position.y, Koala.WIDTH,
-				Koala.HEIGHT);
+		koalaRect.set(player.position.x, player.position.y, WIDTH,
+				HEIGHT);
 		int startX, startY, endX, endY;
-		if (koala.velocity.x > 0) {
-			startX = endX = (int) (koala.position.x + Koala.WIDTH + koala.velocity.x);
+		if (player.velocity.x > 0) {
+			startX = endX = (int) (player.position.x + WIDTH + player.velocity.x);
 		} else {
-			startX = endX = (int) (koala.position.x + koala.velocity.x);
+			startX = endX = (int) (player.position.x + player.velocity.x);
 		}
-		startY = (int) (koala.position.y);
-		endY = (int) (koala.position.y + Koala.HEIGHT);
+		startY = (int) (player.position.y);
+		endY = (int) (player.position.y + HEIGHT);
 		getTiles(startX, startY, endX, endY, tiles);
-		koalaRect.x += koala.velocity.x;
+		koalaRect.x += player.velocity.x;
 		for (Rectangle tile : tiles) {
 			if (koalaRect.overlaps(tile)) {
-				koala.velocity.x = 0;
+				player.velocity.x = 0;
 				break;
 			}
 		}
-		koalaRect.x = koala.position.x;
+		koalaRect.x = player.position.x;
 
 		// if the koala is moving upwards, check the tiles to the top of it's
 		// top bounding box edge, otherwise check the ones to the bottom
-		if (koala.velocity.y > 0) {
-			startY = endY = (int) (koala.position.y + Koala.HEIGHT + koala.velocity.y);
+		if (player.velocity.y > 0) {
+			startY = endY = (int) (player.position.y + HEIGHT + player.velocity.y);
 		} else {
-			startY = endY = (int) (koala.position.y + koala.velocity.y);
+			startY = endY = (int) (player.position.y + player.velocity.y);
 		}
-		startX = (int) (koala.position.x);
-		endX = (int) (koala.position.x + Koala.WIDTH);
+		startX = (int) (player.position.x);
+		endX = (int) (player.position.x + WIDTH);
 		getTiles(startX, startY, endX, endY, tiles);
-		koalaRect.y += koala.velocity.y;
+		koalaRect.y += player.velocity.y;
 		
 		
 		for (Rectangle tile : tiles) {
@@ -315,18 +338,18 @@ public class GameScreen implements Screen {
 				// we actually reset the koala y-position here
 				// so it is just below/above the tile we collided with
 				// this removes bouncing :)
-				if (koala.velocity.y > 0) {
-					koala.position.y = tile.y - Koala.HEIGHT;
+				if (player.velocity.y > 0) {
+					player.position.y = tile.y - HEIGHT;
 					// we hit a block jumping upwards, let's destroy it!
 					TiledMapTileLayer layer = (TiledMapTileLayer) level
 							.getLayers().get(1);
 					layer.setCell((int) tile.x, (int) tile.y, null);
 				} else {
-					koala.position.y = tile.y + tile.height;
+					player.position.y = tile.y + tile.height;
 					// if we hit the ground, mark us as grounded so we can jump
-					koala.grounded = true;
+					player.grounded = true;
 				}
-				koala.velocity.y = 0;
+				player.velocity.y = 0;
 				break;
 			}
 		}
@@ -334,12 +357,12 @@ public class GameScreen implements Screen {
 
 		// unscale the velocity by the inverse delta time and set
 		// the latest position
-		koala.position.add(koala.velocity);
-		koala.velocity.scl(1 / deltaTime);
+		player.position.add(player.velocity);
+		player.velocity.scl(1 / deltaTime);
 
 		// Apply damping to the velocity on the x-axis so we don't
 		// walk infinitely once a key was pressed
-		koala.velocity.x *= Koala.DAMPING;
+		player.velocity.x *= DAMPING;
 
 	}
 	
@@ -370,15 +393,15 @@ public class GameScreen implements Screen {
 	private void renderKoala(float deltaTime) {
 		// based on the koala state, get the animation frame
 		TextureRegion frame = null;
-		switch (koala.state) {
+		switch (player.state) {
 		case Standing:
-			frame = stand.getKeyFrame(koala.stateTime);
+			frame = stand.getKeyFrame(player.stateTime);
 			break;
 		case Walking:
-			frame = walk.getKeyFrame(koala.stateTime);
+			frame = walk.getKeyFrame(player.stateTime);
 			break;
 		case Jumping:
-			frame = jump.getKeyFrame(koala.stateTime);
+			frame = jump.getKeyFrame(player.stateTime);
 			break;
 		}
 
@@ -387,12 +410,12 @@ public class GameScreen implements Screen {
 		// or left
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
-		if (koala.facesRight) {
-			batch.draw(frame, koala.position.x, koala.position.y, Koala.WIDTH,
-					Koala.HEIGHT);
+		if (player.facesRight) {
+			batch.draw(frame, player.position.x, player.position.y,  WIDTH,
+					 HEIGHT);
 		} else {
-			batch.draw(frame, koala.position.x + Koala.WIDTH, koala.position.y,
-					-Koala.WIDTH, Koala.HEIGHT);
+			batch.draw(frame, player.position.x +  WIDTH, player.position.y,
+					- WIDTH,  HEIGHT);
 		}
 		batch.end();
 	}
