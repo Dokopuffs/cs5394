@@ -49,6 +49,7 @@ public class GameScreen implements Screen {
 	private Texture playerTexture;
 	private Texture bulletTexture;
 	private Texture enemyTexture;
+	private Texture enemyTexture2;
 	private SuperStarPlatformer ssp;
 	private TiledMap level;
 	private OrthographicCamera camera;
@@ -59,6 +60,8 @@ public class GameScreen implements Screen {
 	private OrthogonalTiledMapRenderer renderer;
 	private TextureRegion bulletReg;
 	private TextureRegion enemyReg;
+	private TextureRegion enemyReg2;
+	private TextureRegion enemyReg3;
 	private PlayerCharacter player;
 	private Enemy enemy;
 	private float totalTime = 0.0f;
@@ -168,8 +171,10 @@ public class GameScreen implements Screen {
 		playerTexture = new Texture("content/Megaman.png");
 		bulletTexture = new Texture("content/bullet.png");
 		enemyTexture = new Texture("content/koalio2.png");
+		enemyTexture2 = new Texture("content/koalio3.png");
 		bulletReg = new TextureRegion(bulletTexture, 2, 4, 12, 8);
-		enemyReg = new TextureRegion(enemyTexture, 18, 26);
+		enemyReg = new TextureRegion(enemyTexture, 18, 26); //bat
+		enemyReg2 = new TextureRegion(enemyTexture2,38, 26); //spider
 		TextureRegion standReg = new TextureRegion(playerTexture, 94, 4, maxWidth, maxHeight);
 		TextureRegion jumpReg = new TextureRegion(playerTexture, 199, 4, maxWidth, maxHeight);
 		stand = new Animation(0, standReg);
@@ -207,16 +212,17 @@ public class GameScreen implements Screen {
 		player.position.set(20, 20);
 		
 		//create enemies
-		Vector2 enemyPos = new Vector2(30f, 5f);
-		//Vector2 playerPos = new Vector2( position.x,  position.y);
-		entityList.add(new Enemy(enemyPos, 2, enemyReg, renderer));
+		Vector2 enemyPos = new Vector2(20f, 5f);
+	
 		
-		Vector2 enemyPos2 = new Vector2(20f, 9f);
-		entityList.add(new Enemy(enemyPos2, 2, enemyReg, renderer));
+		entityList.add(new Enemy(enemyPos,  player.position, 1,  2, enemyReg, renderer));
+		
+		Vector2 enemyPos2 = new Vector2(10f, 3f);
+		entityList.add(new Enemy(enemyPos2, player.position, 2,  2, enemyReg2, renderer));
 		
 		
-		Vector2 enemyPos3 = new Vector2(15f, 7f);
-		entityList.add(new Enemy(enemyPos3,  2, enemyReg, renderer));
+		Vector2 enemyPos3 = new Vector2(30f, 7f);
+		entityList.add(new Enemy(enemyPos3, player.position, 1,  2, enemyReg, renderer));
 		
 	}
 
