@@ -1,5 +1,7 @@
 package screen;
 
+import items.QueuedBullet;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +74,7 @@ public class GameScreen implements Screen {
 			return new Rectangle();
 		}
 	};
+	private List<QueuedBullet> bulletsToBeFired;
 
 	public GameScreen(SuperStarPlatformer superStarPlatformer) {
 		// TODO Auto-generated constructor stub
@@ -109,10 +112,15 @@ public class GameScreen implements Screen {
 		// update)
 		updateKoala(delta);
 		List<Entity> entitiesToRemove = new ArrayList<Entity>();
+		for(QueuedBullet b : bulletsToBeFired){
+			fireBullet(b.position, b.facesRight);
+		}
+		bulletsToBeFired.clear();
 		for(Entity e : entityList){
+			//need to consider bullet-enemy/player collision and enemy-player collisions
 			e.Update(delta);
-			boolean isInCamera = camera.frustum.pointInFrustum(e.position.x, e.position.y, 0f);
 			if (e instanceof Bullet){
+				boolean isInCamera = camera.frustum.pointInFrustum(e.position.x, e.position.y, 0f);
 				if (!isInCamera){
 					entitiesToRemove.add(e);
 				} else {
@@ -128,10 +136,10 @@ public class GameScreen implements Screen {
 						if (!e.equals(e2)){
 							rectPool.obtain();
 						}
-					}
-					
-					
+					}				
 				}
+			} else if(e instanceof Enemy){
+				//if enemy hits player, player takes damage and gets knocked back
 			}
 		}
 		entityList.removeAll(entitiesToRemove);
@@ -150,6 +158,11 @@ public class GameScreen implements Screen {
 		for(Entity e: entityList){
 			e.Render(delta);
 		}
+	}
+
+	private void fireBullet(Bullet b) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -203,12 +216,14 @@ public class GameScreen implements Screen {
 		camera.setToOrtho(false, 30, 20);
 		camera.update();
 		
+		bulletsToBeFired = new ArrayList<QueuedBullet>();
+		
 		
 		
 
 		// create the Koala we want to move around the world
 		Vector2 charPosition = new Vector2(20,20);
-		player = new PlayerCharacter(charPosition, 100, renderer);
+		player = new PlayerCharacter(charPosition, 100, renderer, level);
 		entityList.add(player);
 		
 		
@@ -216,14 +231,14 @@ public class GameScreen implements Screen {
 		Vector2 enemyPos = new Vector2(20f, 5f);
 	
 		
-		entityList.add(new Enemy(enemyPos,  player.position, 1,  2, enemyReg, renderer));
+		entityList.add(new Enemy(enemyPos,  player.position, 1,  2, enemyReg, renderer, level, this));
 		
 		Vector2 enemyPos2 = new Vector2(10f, 3f);
-		entityList.add(new Enemy(enemyPos2, player.position, 2,  2, enemyReg2, renderer));
+		entityList.add(new Enemy(enemyPos2, player.position, 2,  2, enemyReg2, renderer, level, this));
 		
 		
 		Vector2 enemyPos3 = new Vector2(30f, 7f);
-		entityList.add(new Enemy(enemyPos3, player.position, 1,  2, enemyReg, renderer));
+		entityList.add(new Enemy(enemyPos3, player.position, 5,  2, enemyReg, renderer, level, this));
 		
 	}
 	
@@ -358,14 +373,14 @@ public class GameScreen implements Screen {
 
 	}
 	
-	private void fireBullet(Vector2 position, boolean facesRight) {
+	public void fireBullet(Vector2 position, boolean facesRight) {
 		Vector2 newPos = new Vector2(position.x, position.y + .5f);
 		if(facesRight){
 			newPos.x += .5f;
-			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer));	
+			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer, level));	
 		} else {
 			newPos.x -= .5f;
-			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer));
+			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer, level));
 		}
 	}
 
@@ -427,6 +442,11 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
+	}
+
+	public void addBullet(Vector2 position, boolean facesRight) {
+		// TODO Auto-generated method stub
+		bulletsToBeFired.add(new QueuedBullet(position, facesRight));
 	}
 
 }

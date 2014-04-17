@@ -2,6 +2,7 @@ package characters;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 
@@ -14,8 +15,8 @@ public class Bullet extends Entity {
 	private float HEIGHT = 8f;
 	private float WIDTH = 12f;
 	
-	public Bullet(Vector2 pos, int health, boolean facesRight, TextureRegion bulletReg, OrthogonalTiledMapRenderer renderer) {
-		super(pos, health, renderer);
+	public Bullet(Vector2 pos, int health, boolean facesRight, TextureRegion bulletReg, OrthogonalTiledMapRenderer renderer, TiledMap level) {
+		super(pos, health, renderer, level);
 		damage = health;
 		velocity = facesRight ? MAX_VEL : -MAX_VEL;
 		tex = bulletReg;
