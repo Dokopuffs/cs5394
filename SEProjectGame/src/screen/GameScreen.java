@@ -203,8 +203,9 @@ public class GameScreen implements Screen {
 
 		// create the Koala we want to move around the world
 		Vector2 charPosition = new Vector2(20,20);
-		player = new PlayerCharacter(charPosition, 100);
-		player.position.set(20, 20);
+		player = new PlayerCharacter(charPosition, 100, renderer);
+		entityList.add(player);
+		
 		
 		//create enemies
 		Vector2 enemyPos = new Vector2(30f, 5f);
@@ -218,21 +219,6 @@ public class GameScreen implements Screen {
 		Vector2 enemyPos3 = new Vector2(15f, 7f);
 		entityList.add(new Enemy(enemyPos3,  2, enemyReg, renderer));
 		
-	}
-
-	static class Koala {
-		
-
-		enum State {
-			Standing, Walking, Jumping
-		}
-
-		final Vector2 position = new Vector2();
-		final Vector2 velocity = new Vector2();
-		State state = State.Walking;
-		float stateTime = 0;
-		boolean facesRight = true;
-		boolean grounded = false;
 	}
 	
 	private void updateKoala(float deltaTime) {

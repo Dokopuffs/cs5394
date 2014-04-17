@@ -1,5 +1,6 @@
 package characters;
 
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class PlayerCharacter extends Entity {
@@ -8,8 +9,8 @@ public class PlayerCharacter extends Entity {
 	public PlayerState state;
 	public float stateTime;
 
-	public PlayerCharacter(Vector2 pos, int health) {
-		super(pos, health);
+	public PlayerCharacter(Vector2 pos, int health, OrthogonalTiledMapRenderer rend) {
+		super(pos, health, rend);
 		state = PlayerState.Standing;
 	}
 	

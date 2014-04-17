@@ -12,7 +12,6 @@ public  class Enemy extends Entity {
 	private Vector2 playerPosition;
 	private final float MAX_VEL = 5f;
 	private TextureRegion tex;
-	private OrthogonalTiledMapRenderer renderer;
 	private float HEIGHT = 8f;
 	private float WIDTH = 12f;
 	private float leftBorder = 10f;
@@ -23,13 +22,11 @@ public  class Enemy extends Entity {
 
 	
 	public Enemy(Vector2 pos, int health,TextureRegion enemyReg, OrthogonalTiledMapRenderer renderer) {
-		super(pos, health);
+		super(pos, health, renderer);
 		hp = health;
-		tex = enemyReg;
-	
+		tex = enemyReg;	
 		this.position.x = pos.x;
 		this.position.y = pos.y;
-		this.renderer = renderer;
 		velocity =  MAX_VEL;
 	}
 	

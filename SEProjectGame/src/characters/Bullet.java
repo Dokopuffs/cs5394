@@ -11,16 +11,14 @@ public class Bullet extends Entity {
 	private final float MAX_VEL = 25f;
 	private float velocity;
 	private TextureRegion tex;
-	private OrthogonalTiledMapRenderer renderer;
 	private float HEIGHT = 8f;
 	private float WIDTH = 12f;
 	
 	public Bullet(Vector2 pos, int health, boolean facesRight, TextureRegion bulletReg, OrthogonalTiledMapRenderer renderer) {
-		super(pos, health);
+		super(pos, health, renderer);
 		damage = health;
 		velocity = facesRight ? MAX_VEL : -MAX_VEL;
 		tex = bulletReg;
-		this.renderer = renderer;
 	}
 
 	@Override
