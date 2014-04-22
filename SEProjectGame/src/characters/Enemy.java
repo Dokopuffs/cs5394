@@ -75,6 +75,9 @@ public class Enemy extends Entity {
 		// CHARGE ENEMY TYPE
 		if (enemyType == 2) {
 
+			
+			
+			//Chase player
 			if (playerPosition.x > position.x) {
 				position.x += delta * velocity;
 			} else
@@ -87,8 +90,18 @@ public class Enemy extends Entity {
 			if (position.x < mapEleChange[0])
 				if (position.y >= 2f)
 					position.y -= delta * velocity * 2;
-
-		}
+			
+			
+			//If close enough, attack
+			if(stateTime - lastBulletFired > 0.75f  && Math.abs(playerPosition.x - position.x ) < 4){
+				FireBullet();
+				lastBulletFired = stateTime;
+			}
+			
+			//if hp is low retreat
+	}
+	
+		
 
 		// KITE ENEMY TYPE
 		if (enemyType == 3) {
@@ -100,12 +113,17 @@ public class Enemy extends Entity {
 		}
 		// ATTACK ENEMY TYPE
 		if (enemyType == 5) {
+			
+			
+			
 			if(stateTime - lastBulletFired > 0.75f){
 				FireBullet();
 				lastBulletFired = stateTime;
 			}
 		}
 	}
+	
+
 
 	@Override
 	public void Render(float delta) {
