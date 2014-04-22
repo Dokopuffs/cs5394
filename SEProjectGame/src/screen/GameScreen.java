@@ -238,7 +238,7 @@ public class GameScreen implements Screen {
 		
 		
 		Vector2 enemyPos3 = new Vector2(30f, 7f);
-		entityList.add(new Enemy(enemyPos3, player.position, 5,  2, enemyReg, renderer, level, this));
+		entityList.add(new Enemy(enemyPos3, player.position, 1,  2, enemyReg, renderer, level, this));
 		
 	}
 	
