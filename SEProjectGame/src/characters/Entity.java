@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 public abstract class Entity {
 	public Vector2 position;
 	public float width, height;
-	int health;
+	public int health;
 	public boolean facesRight;
 	public boolean grounded;
 	Weapon weapon;

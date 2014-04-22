@@ -8,18 +8,20 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends Entity {
 
-	private int damage;
+	public int damage;
 	private final float MAX_VEL = 25f;
 	private float velocity;
 	private TextureRegion tex;
-	private float HEIGHT = 8f;
-	private float WIDTH = 12f;
+	public Class<?> owner;
 	
-	public Bullet(Vector2 pos, int health, boolean facesRight, TextureRegion bulletReg, OrthogonalTiledMapRenderer renderer, TiledMap level) {
+	public Bullet(Vector2 pos, int health, boolean facesRight, TextureRegion bulletReg, OrthogonalTiledMapRenderer renderer, TiledMap level, Class<?> owner) {
 		super(pos, health, renderer, level);
 		damage = health;
 		velocity = facesRight ? MAX_VEL : -MAX_VEL;
 		tex = bulletReg;
+		this.owner = owner;
+		this.height = 8f;
+		this.width = 12f;
 	}
 
 	@Override
@@ -32,7 +34,7 @@ public class Bullet extends Entity {
 		// TODO Auto-generated method stub
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
-		batch.draw(tex, position.x, position.y, WIDTH / 16f, HEIGHT / 16f);
+		batch.draw(tex, position.x, position.y, width / 16f, height / 16f);
 		batch.end();
 	}
 

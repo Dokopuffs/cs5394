@@ -113,7 +113,7 @@ public class GameScreen implements Screen {
 		updateKoala(delta);
 		List<Entity> entitiesToRemove = new ArrayList<Entity>();
 		for(QueuedBullet b : bulletsToBeFired){
-			fireBullet(b.position, b.facesRight);
+			fireBullet(b.position, b.facesRight, b.owner);
 		}
 		bulletsToBeFired.clear();
 		for(Entity e : entityList){
@@ -121,6 +121,7 @@ public class GameScreen implements Screen {
 			e.Update(delta);
 			if (e instanceof Bullet){
 				boolean isInCamera = camera.frustum.pointInFrustum(e.position.x, e.position.y, 0f);
+				Bullet b = (Bullet) e;
 				if (!isInCamera){
 					entitiesToRemove.add(e);
 				} else {
@@ -133,8 +134,22 @@ public class GameScreen implements Screen {
 					endY = startY + (int)e.height;
 					getTiles(startX, startY, endX, endY, tiles);
 					for(Entity e2 : entityList){
-						if (!e.equals(e2)){
-							rectPool.obtain();
+						if (!b.equals(e2)){
+							if((b.owner == Enemy.class && e2 instanceof PlayerCharacter) || (b.owner == PlayerCharacter.class && e2 instanceof Enemy)){
+								Gdx.app.log("CollDet", "bullet checking with enemy/character ");
+								Rectangle entityRect = rectPool.obtain();
+								entityRect.set(e2.position.x, e2.position.y, e2.width, e2.height);
+								Rectangle bulletRect = rectPool.obtain();
+								bulletRect.set(b.position.x, b.position.y, b.width, b.height);
+								Gdx.app.log("CollDet", "Bullet " + bulletRect + " checking with Entity " + entityRect);
+								if(bulletRect.overlaps(entityRect)){
+									e2.health -= b.damage;
+									entitiesToRemove.add(b);
+									if(e2.health <= 0){
+										entitiesToRemove.add(e2);
+									}
+								}
+							}							
 						}
 					}				
 				}
@@ -158,11 +173,6 @@ public class GameScreen implements Screen {
 		for(Entity e: entityList){
 			e.Render(delta);
 		}
-	}
-
-	private void fireBullet(Bullet b) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -231,14 +241,14 @@ public class GameScreen implements Screen {
 		Vector2 enemyPos = new Vector2(20f, 5f);
 	
 		
-		entityList.add(new Enemy(enemyPos,  player.position, 1,  2, enemyReg, renderer, level, this));
+		entityList.add(new Enemy(enemyPos,  player.position, 1,  4, enemyReg, renderer, level, this));
 		
 		Vector2 enemyPos2 = new Vector2(10f, 3f);
-		entityList.add(new Enemy(enemyPos2, player.position, 2,  2, enemyReg2, renderer, level, this));
+		entityList.add(new Enemy(enemyPos2, player.position, 2,  8, enemyReg2, renderer, level, this));
 		
 		
 		Vector2 enemyPos3 = new Vector2(30f, 7f);
-		entityList.add(new Enemy(enemyPos3, player.position, 5,  2, enemyReg, renderer, level, this));
+		entityList.add(new Enemy(enemyPos3, player.position, 5,  10, enemyReg, renderer, level, this));
 		
 	}
 	
@@ -275,7 +285,7 @@ public class GameScreen implements Screen {
 		if(Gdx.input.isKeyPressed(Keys.F)){
 			//fire off a bullet
 			if ((totalTime - lastBulletFired) > 0.08f)
-				fireBullet(player.position, player.facesRight);
+				fireBullet(player.position, player.facesRight, PlayerCharacter.class);
 				lastBulletFired = totalTime;
 		}
 		
@@ -373,14 +383,14 @@ public class GameScreen implements Screen {
 
 	}
 	
-	public void fireBullet(Vector2 position, boolean facesRight) {
+	public void fireBullet(Vector2 position, boolean facesRight, Class<?> owner) {
 		Vector2 newPos = new Vector2(position.x, position.y + .5f);
 		if(facesRight){
 			newPos.x += .5f;
-			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer, level));	
+			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer, level, owner));	
 		} else {
 			newPos.x -= .5f;
-			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer, level));
+			entityList.add(new Bullet(newPos, 2, facesRight, bulletReg, renderer, level, owner));
 		}
 	}
 
@@ -444,9 +454,9 @@ public class GameScreen implements Screen {
 		}
 	}
 
-	public void addBullet(Vector2 position, boolean facesRight) {
+	public void addBullet(Vector2 position, boolean facesRight, Class<?> owner) {
 		// TODO Auto-generated method stub
-		bulletsToBeFired.add(new QueuedBullet(position, facesRight));
+		bulletsToBeFired.add(new QueuedBullet(position, facesRight, owner));
 	}
 
 }

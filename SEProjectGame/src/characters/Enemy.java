@@ -10,13 +10,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Enemy extends Entity {
-
-	private int hp;
+	
 	private Vector2 playerPosition;
 	private final float MAX_VEL = 5f;
 	private TextureRegion tex;
-	private float HEIGHT = 8f;
-	private float WIDTH = 12f;
 	private float leftBorder = 10f;
 	private float rightBorder = 40f;
 	private float velocity;
@@ -31,7 +28,7 @@ public class Enemy extends Entity {
 			TextureRegion enemyReg, OrthogonalTiledMapRenderer renderer,
 			TiledMap level, GameScreen screen) {
 		super(pos, health, renderer, level);
-		hp = health;
+		this.health = health;
 		tex = enemyReg;
 		enemyType = type;
 		this.bulletListener = screen;
@@ -41,6 +38,8 @@ public class Enemy extends Entity {
 		this.position.x = pos.x;
 		this.position.y = pos.y;
 		velocity = MAX_VEL;
+		this.height = 8f;
+		this.width = 12f;
 	}
 
 	@Override
@@ -113,7 +112,7 @@ public class Enemy extends Entity {
 		// TODO Auto-generated method stub
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
-		batch.draw(tex, position.x, position.y, WIDTH / 4f, HEIGHT / 4f);
+		batch.draw(tex, position.x, position.y, width / 4f, height / 4f);
 		batch.end();
 	}
 
@@ -122,9 +121,9 @@ public class Enemy extends Entity {
 	private void FireBullet() {
 		float diff = position.x - playerPosition.x;
 		if(diff > 0.0f){
-			bulletListener.addBullet(new Vector2(position), false);
+			bulletListener.addBullet(new Vector2(position), false, Enemy.class);
 		} else {
-			bulletListener.addBullet(new Vector2(position), true);
+			bulletListener.addBullet(new Vector2(position), true, Enemy.class);
 		}
 	}
 
