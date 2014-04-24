@@ -19,6 +19,11 @@ public class Enemy extends Entity {
 	private float velocity;
 	private int enemyType; // 1 = patrol; 2 = charge; 3 = kite; 4 = retreat; 5 =
 							// attack;
+	
+	private boolean kiteRightBorderReached = false;
+	private boolean kiteLeftBorderReached =true;
+	private float rightBorderKite = 40f;
+	private float leftBorderKite = 40f;
 	private boolean patrolRightBorderReached = false;
 	private boolean patrolLeftBorderReached = true;
 	private float[] mapEleChange = { 18f, 31f, 35f };
@@ -77,8 +82,8 @@ public class Enemy extends Entity {
 
 			
 			
-			//Chase player
-			if (playerPosition.x > position.x) {
+			//Chase player, if hp is low retreat
+			if (playerPosition.x > position.x && health > 2) {
 				position.x += delta * velocity;
 			} else
 				position.x -= delta * velocity;
@@ -98,14 +103,33 @@ public class Enemy extends Entity {
 				lastBulletFired = stateTime;
 			}
 			
-			//if hp is low retreat
+			
+		
 	}
 	
 		
 
 		// KITE ENEMY TYPE
 		if (enemyType == 3) {
+			if(position.x-playerPosition.x<=4f && position.x-playerPosition.x>=0)
+			{
+				position.x += delta * velocity*1.97;
+				if(position.x-playerPosition.x>=2f)
+				{
 
+					if(stateTime - lastBulletFired > 1f)
+					{
+						FireBullet();
+						lastBulletFired = stateTime;
+					}
+				}
+
+				if (position.x-playerPosition.x >= rightBorderKite) 
+				{
+					kiteRightBorderReached = true;
+					kiteLeftBorderReached = false;
+				}
+			}
 		}
 		// RETREAT ENEMY TYPE
 		if (enemyType == 4) {
@@ -134,7 +158,7 @@ public class Enemy extends Entity {
 		batch.end();
 	}
 
-	EnemyState state;
+
 
 	private void FireBullet() {
 		float diff = position.x - playerPosition.x;

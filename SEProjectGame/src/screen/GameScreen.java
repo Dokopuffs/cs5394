@@ -4,6 +4,7 @@ import items.QueuedBullet;
 
 import java.util.ArrayList;
 import java.util.List;
+import screen.TitleScreen;
 
 import koalio.SuperKoalio.Koala;
 import main.SuperStarPlatformer;
@@ -107,7 +108,8 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		// get the delta time
-
+		
+	        
 		// update the koala (process input, collision detection, position
 		// update)
 		updateKoala(delta);
@@ -250,6 +252,10 @@ public class GameScreen implements Screen {
 		Vector2 enemyPos3 = new Vector2(30f, 7f);
 		entityList.add(new Enemy(enemyPos3, player.position, 1,  2, batRegion, renderer, level, this));
 		
+		
+		Vector2 enemyPos4 = new Vector2(8f, 4f);
+		entityList.add(new Enemy(enemyPos4, player.position, 3,  2, batRegion, renderer, level, this));
+		
 	}
 	
 	private void updateKoala(float deltaTime) {
@@ -257,6 +263,11 @@ public class GameScreen implements Screen {
 			return;
 		player.stateTime += deltaTime;
 		totalTime += deltaTime;
+		
+		 if(player.position.y < .01f || player.health <= 0){
+	        	
+	        	ssp.setScreen(ssp.getGame());
+	        }
 
 		// check input and apply to velocity & state
 		if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.75f, 1))
