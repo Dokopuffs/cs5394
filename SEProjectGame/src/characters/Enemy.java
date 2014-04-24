@@ -16,6 +16,7 @@ public class Enemy extends Entity {
 	private TextureRegion tex;
 	private float leftBorder = 10f;
 	private float rightBorder = 40f;
+	private float hp;
 	private float velocity;
 	private int enemyType; // 1 = patrol; 2 = charge; 3 = kite; 4 = retreat; 5 =
 							// attack;
@@ -33,7 +34,7 @@ public class Enemy extends Entity {
 			TextureRegion enemyReg, OrthogonalTiledMapRenderer renderer,
 			TiledMap level, GameScreen screen) {
 		super(pos, health, renderer, level);
-		this.health = health;
+		hp = health;
 		tex = enemyReg;
 		enemyType = type;
 		this.bulletListener = screen;
@@ -133,7 +134,13 @@ public class Enemy extends Entity {
 		}
 		// RETREAT ENEMY TYPE
 		if (enemyType == 4) {
-
+			if(hp<=.25*health)
+			{
+				if(position.x-playerPosition.x<=4f && position.x-playerPosition.x>=0)
+				{
+					position.x+=delta*velocity*2.5;
+				}
+				}
 		}
 		// ATTACK ENEMY TYPE
 		if (enemyType == 5) {
