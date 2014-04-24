@@ -38,8 +38,8 @@ public class Enemy extends Entity {
 		this.position.x = pos.x;
 		this.position.y = pos.y;
 		velocity = MAX_VEL;
-		this.height = 8f;
-		this.width = 12f;
+		this.height = enemyReg.getRegionHeight() / 12f;
+		this.width = enemyReg.getRegionHeight() / 12f;
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class Enemy extends Entity {
 		// TODO Auto-generated method stub
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
-		batch.draw(tex, position.x, position.y, width / 4f, height / 4f);
+		batch.draw(tex, position.x, position.y, width , height);
 		batch.end();
 	}
 

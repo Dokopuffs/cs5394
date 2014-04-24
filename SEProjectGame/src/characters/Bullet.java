@@ -20,8 +20,8 @@ public class Bullet extends Entity {
 		velocity = facesRight ? MAX_VEL : -MAX_VEL;
 		tex = bulletReg;
 		this.owner = owner;
-		this.height = 8f;
-		this.width = 12f;
+		this.height = 8f / 16f;
+		this.width = 12f / 16f;
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class Bullet extends Entity {
 		// TODO Auto-generated method stub
 		Batch batch = renderer.getSpriteBatch();
 		batch.begin();
-		batch.draw(tex, position.x, position.y, width / 16f, height / 16f);
+		batch.draw(tex, position.x, position.y, width , height);
 		batch.end();
 	}
 
