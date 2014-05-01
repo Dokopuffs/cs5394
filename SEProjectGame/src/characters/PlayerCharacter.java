@@ -9,9 +9,11 @@ public class PlayerCharacter extends Entity {
 
 	public PlayerState state;
 
-	public PlayerCharacter(Vector2 pos, int health, OrthogonalTiledMapRenderer rend, TiledMap level) {
+	public PlayerCharacter(Vector2 pos, int health, OrthogonalTiledMapRenderer rend, TiledMap level, float width, float height) {
 		super(pos, health, rend, level);
 		state = PlayerState.Standing;
+		this.height = height;
+		this.width = width;
 	}
 	
 	public enum State {

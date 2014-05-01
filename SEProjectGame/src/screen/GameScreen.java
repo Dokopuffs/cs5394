@@ -4,8 +4,8 @@ import items.QueuedBullet;
 
 import java.util.ArrayList;
 import java.util.List;
-import screen.TitleScreen;
 
+import screen.TitleScreen;
 import koalio.SuperKoalio.Koala;
 import main.SuperStarPlatformer;
 import characters.Bullet;
@@ -26,6 +26,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -137,13 +139,13 @@ public class GameScreen implements Screen {
 					getTiles(startX, startY, endX, endY, tiles);
 					for(Entity e2 : entityList){
 						if (!b.equals(e2)){
-							if((b.owner == Enemy.class && e2 instanceof PlayerCharacter) || (b.owner == PlayerCharacter.class && e2 instanceof Enemy)){
+ 							if((b.owner == Enemy.class && e2 instanceof PlayerCharacter) || (b.owner == PlayerCharacter.class && e2 instanceof Enemy)){
 								//Gdx.app.log("CollDet", "bullet checking with enemy/character ");
 								Rectangle entityRect = rectPool.obtain();
 								entityRect.set(e2.position.x, e2.position.y, e2.width, e2.height);
 								Rectangle bulletRect = rectPool.obtain();
 								bulletRect.set(b.position.x, b.position.y, b.width, b.height);
-								//Gdx.app.log("CollDet", "Bullet " + bulletRect + " checking with Entity " + entityRect);
+								Gdx.app.log("CollDet", "Bullet " + bulletRect + " checking with " + e2.getClass());
 								if(bulletRect.overlaps(entityRect)){
 									e2.health -= b.damage;
 									entitiesToRemove.add(b);
@@ -169,12 +171,21 @@ public class GameScreen implements Screen {
 		// camera sees and render the map
 		renderer.setView(camera);
 		renderer.render();
+		showPlayerHealth(player.health);
 
 		// render the koala
 		renderKoala(delta);
 		for(Entity e: entityList){
 			e.Render(delta);
 		}
+	}
+
+	private void showPlayerHealth(int health) {
+		BitmapFont font = new BitmapFont();
+		SpriteBatch batch = new SpriteBatch();
+		batch.begin();
+		font.draw(batch, "Health: " + health, 0.5f, Gdx.graphics.getHeight() - 0.5f);
+		batch.end();
 	}
 
 	@Override
@@ -235,7 +246,7 @@ public class GameScreen implements Screen {
 
 		// create the Koala we want to move around the world
 		Vector2 charPosition = new Vector2(20,20);
-		player = new PlayerCharacter(charPosition, 100, renderer, level);
+		player = new PlayerCharacter(charPosition, 100, renderer, level, WIDTH, HEIGHT);
 		entityList.add(player);
 		
 		
